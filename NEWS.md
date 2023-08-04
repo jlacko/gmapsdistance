@@ -1,4 +1,4 @@
-## version 4.0.2 (2023-08-04)
+## version 4.0.3 (2023-08-04)
 
 - corrected errors introduced by scientific formatting of seconds since Unix Epoch
 - moved dates in vignette to the future (only future dates are considered legal by the Google API)
