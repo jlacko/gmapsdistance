@@ -1,30 +1,30 @@
 test_that("pesky troublemaker", {
   skip_on_cran() # because API key...
 
-  results <- gmapsdistance(origin = c("Washington DC", "New York NY"),
-                           destination = c("Los Angeles CA", "Austin TX"),
-                           mode = "driving",
-                           dep_date = as.character(Sys.Date() + 122),  # to make reproducible...
-                           dep_time = "20:40:00",
-                           traffic_model = "pessimistic",
-                           shape = "long",
+  results <- gmapsdistance(origin = c("Washington DC", "New York NY",
+                                      "Seattle WA", "Miami FL"),
+                           destination = c("Los Angeles CA", "Austin TX",
+                                           "Chicago IL", "Philadelphia PA"),
+                           mode = "bicycling",
+                           dep_date = "2023-11-14",
+                           dep_time = "23:13:20",
                            key = Sys.getenv("GOOGLE_API_KEY"))
 
-  expect_equal(unique(results$Status$status), "OK")
-  expect_equal(any(is.na(results$Time$Time)), FALSE)
+  expect_equal(unique(as.vector(results$Status)), "OK")
+  expect_equal(any(is.na(as.vector(results$Time))), FALSE)
 
 
-  gmapsdistance(origin = c("Washington DC", "New York NY",
-                           "Seattle WA", "Miami FL"),
-                destination = c("Los Angeles CA", "Austin TX",
-                                "Chicago IL", "Philadelphia PA"),
-                mode = "bicycling",
-                # departure time as seconds from Unix Epoch (1970-01-01)
-                # checkt that it is in future! = as.POSIXct(1660682400, origin="1970-01-01")
-                departure = 1690682400,
-                key = Sys.getenv("GOOGLE_API_KEY"))
+  results <- gmapsdistance(origin = c("Washington DC", "New York NY",
+                                      "Seattle WA", "Miami FL"),
+                           destination = c("Los Angeles CA", "Austin TX",
+                                           "Chicago IL", "Philadelphia PA"),
+                           mode = "bicycling",
+                           # departure time as seconds from Unix Epoch (1970-01-01)
+                           # check that it happens in future: as.POSIXct(1700000000, origin="1970-01-01")
+                           departure = 1700000000,
+                           key = Sys.getenv("GOOGLE_API_KEY"))
 
-  expect_equal(unique(results$Status$status), "OK")
-  expect_equal(any(is.na(results$Time$Time)), FALSE)
+  expect_equal(unique(as.vector(results$Status)), "OK")
+  expect_equal(any(is.na(as.vector(results$Time))), FALSE)
 
 })

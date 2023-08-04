@@ -1,3 +1,8 @@
+## version 4.0.2 (2023-08-04)
+
+- corrected errors introduced by scientific formatting of seconds since Unix Epoch
+- moved dates in vignette to the future (only future dates are considered legal by the Google API)
+
 ## version 4.0.2 (2023-05-26)
 
 - consider arrival date & time when creating url for API call when using public transport / #5
