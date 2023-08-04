@@ -20,7 +20,8 @@ jobs:
       matrix:
         config:
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: 'devel'}
+          - {os: macOS-latest, r: 'release'}
+          - {os: ubuntu-22.04, r: 'devel'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
