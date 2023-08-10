@@ -1,3 +1,7 @@
+## version 4.0.4 (2023-08-10)
+
+- removed dead links from README to pass CRAN incoming checks
+
 ## version 4.0.3 (2023-08-04)
 
 - corrected errors introduced by scientific formatting of seconds since Unix Epoch

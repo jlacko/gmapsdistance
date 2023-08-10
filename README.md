@@ -97,22 +97,16 @@ It is currently maintained by [Jindra Lacko](mailto:jindra.lacko@gmail.com).
 ## Where has gmapsdistance be used/mentioned.
 We like to keep track of the projects where gmapsdistance has been used. This will help us identify how to better improve the code. Let us know if you use gmapsdistance! Below you will find links to some of the projects and some of the references to gmapsdistance that we have found. 
 
-1. Proximity to pediatric cardiac specialty care for adolescents with congenital heart defects. [Link to article](https://onlinelibrary.wiley.com/doi/10.1002/bdr2.1129). 
+1. Proximity to pediatric cardiac specialty care for adolescents with congenital heart defects. [Link to article](https://doi.org/10.1002/bdr2.1129). 
 
-2. Measuring Accessibility to Rail Transit Stations in Scarborough: Subway vs. LRT. [Link to article](https://www.ryerson.ca/content/dam/tedrogersschool/documents/Measuring%20accessibility%20to%20rail%20transit%20stations%20in%20Scarborough-final.pdf)
+2. Measuring Accessibility to Rail Transit Stations in Scarborough: Subway vs. LRT. [Link to article](https://www.torontomu.ca/content/dam/tedrogersschool/documents/Measuring%20accessibility%20to%20rail%20transit%20stations%20in%20Scarborough-final.pdf)
 
-3. Hyperlinear: Big Data Analytics with R. [Link](http://hyperlinear.com/big-data-analytics-r/)  
+3. Social Data Science Course. University of Copenhagen. Department of Economics. [Link](https://sebastianbarfort.github.io/sds_summer/slides/gathering.pdf)
 
-4. Social Data Science Course. University of Copenhagen. Department of Economics. [Link](https://sebastianbarfort.github.io/sds_summer/slides/gathering.pdf)
+4. R-bloggers. The collaborative innovation landscape in data science. [Link](https://www.r-bloggers.com/2016/07/the-collaborative-innovation-landscape-in-data-science/)
 
-5. R-bloggers. The collaborative innovation landscape in data science. [Link](https://www.r-bloggers.com/2016/07/the-collaborative-innovation-landscape-in-data-science/)
+5. RPubs.  [Link](https://rpubs.com/mattdray/gmapsdistance-test) 
 
-6. DataHubss. Google maps and R. [Link](https://www.datahubbs.com/google-maps-r/). This blog entry refers to gmapsdistance as the best package in to use Google Maps in R.  
+6. Identifying Partnership Opportunities at Air Force Installations: A Geographic Information Systems Approach [Link](https://scholar.afit.edu/cgi/viewcontent.cgi?article=1809&context=etd) 
 
-7. RPubs.  [Link](https://rpubs.com/mattdray/gmapsdistance-test) 
-
-8. Identifying Partnership Opportunities at Air Force Installations: A Geographic Information Systems Approach [Link](https://scholar.afit.edu/cgi/viewcontent.cgi?article=1809&context=etd) 
-
-9. DataWookie. Review of gmapsdistance. [Link](https://datawookie.dev/blog/2017/08/route-asymmetry-in-google-maps/)
-
-
+7. DataWookie. Review of gmapsdistance. [Link](https://datawookie.dev/blog/2017/08/route-asymmetry-in-google-maps/)
