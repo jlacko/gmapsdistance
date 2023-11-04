@@ -7,7 +7,7 @@ test_that("travel on public transport is faster at daytime", {
     destination = "New York City NY",
     key = Sys.getenv("GOOGLE_API_KEY"),
     arr_date = as.character(Sys.Date() + 2),
-    arr_time = "04:00:00", # arrival at 4 AM = bad
+    arr_time = "05:00:00", # arrival at 5 AM = bad
     mode = "transit"
   )
 
@@ -16,7 +16,7 @@ test_that("travel on public transport is faster at daytime", {
     destination = "New York City NY",
     key = Sys.getenv("GOOGLE_API_KEY"),
     arr_date = as.character(Sys.Date() + 2),
-    arr_time = "16:00:00", # arrival at 4 PM = good
+    arr_time = "17:00:00", # arrival at 5 PM = good
     mode = "transit"
   )
 
