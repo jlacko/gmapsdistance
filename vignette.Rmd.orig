@@ -61,7 +61,7 @@ results = gmapsdistance(origin = c("Washington DC", "New York NY",
                                         "Chicago IL", "Philadelphia PA"),
                         mode = "bicycling",
                         # departure time as seconds from Unix Epoch (1970-01-01)
-                        departure = 1700000000)
+                        departure = 1740000000))
 results
 # Equivalently
 results = gmapsdistance(origin = c("Washington DC", "New York NY",
@@ -69,9 +69,8 @@ results = gmapsdistance(origin = c("Washington DC", "New York NY",
                         destination = c("Los Angeles CA", "Austin TX",
                                         "Chicago IL", "Philadelphia PA"),
                         mode = "bicycling",
-                        dep_date = "2023-11-14",
-                        dep_time = "23:13:20")
-
+                        dep_date = "2025-02-19",
+                        dep_time = "22:20:00"))
 results
 ```
 
