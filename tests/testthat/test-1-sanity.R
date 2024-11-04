@@ -2,35 +2,35 @@ test_that("modes work", {
   skip_on_cran() # because API key...
 
   driving <- gmapsdistance(
-      origin = "King's Cross St. Pancras",
-      destination = "Piccadilly Circus",
+      origin = "King's Cross St. Pancras, London, UK",
+      destination = "Canary Wharf, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "driving"
     )
 
   walking <- gmapsdistance(
-      origin = "King's Cross St. Pancras",
-      destination = "Piccadilly Circus",
+      origin = "King's Cross St. Pancras, London, UK",
+      destination = "Canary Wharf, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "walking"
     )
 
   transit <- gmapsdistance(
-      origin = "King's Cross St. Pancras",
-      destination = "Piccadilly Circus",
+      origin = "King's Cross St. Pancras, London, UK",
+      destination = "Canary Wharf, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "transit"
     )
 
   bicycling <- gmapsdistance(
-      origin = "King's Cross St. Pancras",
-      destination = "Piccadilly Circus",
+      origin = "King's Cross St. Pancras, London, UK",
+      destination = "Canary Wharf, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "bicycling"
     )
 
   nonsense <- gmapsdistance(
-    origin = "King's Cross St. Pancras",
+    origin = "King's Cross St. Pancras, London, UK",
     destination = "0,0",
     key = Sys.getenv("GOOGLE_API_KEY"),
     mode = "driving"
