@@ -3,28 +3,28 @@ test_that("modes work", {
 
   driving <- gmapsdistance(
       origin = "King's Cross St. Pancras, London, UK",
-      destination = "Canary Wharf, London, UK",
+      destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "driving"
     )
 
   walking <- gmapsdistance(
       origin = "King's Cross St. Pancras, London, UK",
-      destination = "Canary Wharf, London, UK",
+      destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "walking"
     )
 
   transit <- gmapsdistance(
       origin = "King's Cross St. Pancras, London, UK",
-      destination = "Canary Wharf, London, UK",
+      destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "transit"
     )
 
   bicycling <- gmapsdistance(
       origin = "King's Cross St. Pancras, London, UK",
-      destination = "Canary Wharf, London, UK",
+      destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
       mode = "bicycling"
     )
