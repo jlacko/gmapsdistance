@@ -1,3 +1,7 @@
+## version 4.0.5 (2025-01-08)
+
+- minor housekeeping to improve checks without impact on core functionality
+
 ## version 4.0.4 (2023-08-10)
 
 - removed dead links from README to pass CRAN incoming checks
