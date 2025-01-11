@@ -105,8 +105,14 @@ We like to keep track of the projects where gmapsdistance has been used. This wi
 
 4. R-bloggers. The collaborative innovation landscape in data science. [Link](https://www.r-bloggers.com/2016/07/the-collaborative-innovation-landscape-in-data-science/)
 
-5. RPubs.  [Link](https://rpubs.com/mattdray/gmapsdistance-test) 
+5. RPubs. [Link](https://rpubs.com/mattdray/gmapsdistance-test) 
 
-6. Identifying Partnership Opportunities at Air Force Installations: A Geographic Information Systems Approach [Link](https://scholar.afit.edu/cgi/viewcontent.cgi?article=1809&context=etd) 
+6. Identifying Partnership Opportunities at Air Force Installations: A Geographic Information Systems Approach [Link](https://scholar.afit.edu/etd/810/) 
 
 7. DataWookie. Review of gmapsdistance. [Link](https://datawookie.dev/blog/2017/08/route-asymmetry-in-google-maps/)
+
+8. The Role of Telehealth in Promoting Equitable Abortion Access in the United States: Spatial Analysis [Link to article](https://publichealth.jmir.org/2023/1/e45671)
+
+9. The relationship between living in urban and rural areas of Scotland and children’s physical activity and sedentary levels: a country-wide cross-sectional analysis [Link to article](https://rdcu.be/d5YuW)
+
+10. E-trikes for urban delivery: An empirical mixed-fleet simulation approach to assess city logistics sustainability [Link to article](https://doi.org/10.1016/j.scs.2023.104641)

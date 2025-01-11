@@ -1,6 +1,6 @@
-## version 4.0.5 (2025-01-08)
+## version 4.0.5 (2025-01-11)
 
-- minor housekeeping to improve checks without impact on core functionality
+- update of tests and readme, without impact on core functionality
 
 ## version 4.0.4 (2023-08-10)
 
