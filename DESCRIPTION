@@ -3,8 +3,17 @@ Type: Package
 Title: Distance and Travel Time Between Two Points from Google Maps
 Version: 4.0.5
 Date: 2025-01-11
-Author: Rodrigo Azuero Melo & David Zarruk
-Maintainer: Jindra Lacko <jindra.lacko@gmail.com>
+Authors@R: c(person(given = c("Rodrigo", "Azuero"),
+                    family = "Melo",
+                    role = "aut"),
+             person(given = "David",
+                    family = "Zarruk",
+                    role = "aut"),
+             person(given = "Jindra",
+                    family = "Lacko",
+                    role = "cre",
+                    email = "jindra.lacko@gmail.com",
+                    comment = c(ORCID = "0000-0002-0375-5156")))
 URL: https://github.com/jlacko/gmapsdistance
 BugReports: https://github.com/jlacko/gmapsdistance/issues
 Description: Get distance and travel time between two points from Google Maps.
