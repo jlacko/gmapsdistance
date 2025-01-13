@@ -10,4 +10,12 @@ test_that("API call fails gracefully", {
 
   )
 
+  expect_no_error( # i.e. fail, but graceful
+
+    gmapsdistance(origin = "Washington DC",
+                  destination = "New York, NY",
+                  key = Sys.getenv("GOOGLE_API_KEY"))
+
+  )
+
 })
