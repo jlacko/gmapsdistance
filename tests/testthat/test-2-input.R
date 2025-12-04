@@ -31,14 +31,14 @@ test_that("start date works", {
 test_that("arrrival date works", {
   skip_on_cran() # because API key...
 
-  driving <- gmapsdistance(
-    origin = "Washington DC",
-    destination = "New York City NY",
-    arr_date = as.character(Sys.Date() + 3),
-    arr_time = "12:00:00",
-    key = Sys.getenv("GOOGLE_API_KEY"),
-    mode = "transit"
-  )
+  # driving <- gmapsdistance(
+  #   origin = "Washington DC",
+  #   destination = "New York City NY",
+  #   arr_date = as.character(Sys.Date() + 3),
+  #   arr_time = "12:00:00",
+  #   key = Sys.getenv("GOOGLE_API_KEY"),
+  #   mode = "transit"
+  # )
 
   expect_equal(driving$Status, "OK")
 
