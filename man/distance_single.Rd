@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance_single.R
 \name{distance_single}
 \alias{distance_single}
-\title{Baseline scenario - pairvise origin / destination call}
+\title{Baseline scenario - pairwise origin / destination call}
 \usage{
 distance_single(origin, destination, mode = "driving", key = get.api.key())
 }
@@ -11,13 +11,24 @@ distance_single(origin, destination, mode = "driving", key = get.api.key())
 
 \item{destination}{a single destination}
 
-\item{mode}{mode of tranport}
+\item{mode}{mode of transport; one of "driving", "walking", "bicycling" or
+"transit"}
 
 \item{key}{Google API key}
 }
 \value{
-a list of values: status, duration text + value, distance text + value
+a list of values: status, distance text + value (meters), duration
+text + value (seconds); \code{NA} if the API could not be reached
 }
 \description{
-Baseline scenario - pairvise origin / destination call
+Computes distance and travel time for a single origin / destination pair
+using the JSON interface of the Google Maps Distance Matrix API.
+}
+\details{
+Request level problems (such as an invalid API key or an exhausted quota)
+raise an error carrying the message returned by Google. Route level problems
+(an origin or destination that can not be geocoded, or no route between the
+two) are reported in the \code{status} element, with distance and duration
+set to \code{NA}. If the API can not be reached at all the function fails
+gracefully: it emits a message and returns \code{NA}.
 }
