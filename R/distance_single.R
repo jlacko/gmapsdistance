@@ -1,7 +1,13 @@
-#' Baseline scenario - pairwise origin / destination call
+#' Compute Distance for a Single Pair with Google Maps
 #'
-#' Computes distance and travel time for a single origin / destination pair
-#' using the JSON interface of the Google Maps Distance Matrix API.
+#' The function distance_single uses the JSON interface of the Google Maps
+#' Distance Matrix API to compute the distance and travel time between a single
+#' origin and a single destination. In order to be able to use the function you
+#' will need an API key and enable the Distance Matrix API in the Google
+#' Developers Console. For more information about how to get a key, go to
+#' https://developers.google.com/maps/documentation/distance-matrix/get-api-key#key
+#' For more information about the Google Maps Distance Matrix API go to
+#' https://developers.google.com/maps/documentation/distance-matrix/intro?hl=en
 #'
 #' Request level problems (such as an invalid API key or an exhausted quota)
 #' raise an error carrying the message returned by Google. Route level problems
@@ -10,21 +16,51 @@
 #' set to \code{NA}. If the API can not be reached at all the function fails
 #' gracefully: it emits a message and returns \code{NA}.
 #'
-#' @param origin a single origin
-#' @param destination a single destination
-#' @param mode mode of transport; one of "driving", "walking", "bicycling" or
-#'   "transit"
-#' @param key Google API key
+#' @param origin A single string containing the description of the starting
+#'  point. Coordinates in LAT-LONG format (e.g. "50.087,14.421") are also a
+#'  valid input as long as they can be identified by Google Maps.
 #'
-#' @returns a list of values: status, distance text + value (meters), duration
-#'   text + value (seconds); \code{NA} if the API could not be reached
+#' @param destination A single string containing the description of the end
+#'  point. Should be the same format as the variable "origin".
+#'
+#' @param mode A string containing the mode of transportation desired. One of
+#'  "driving" (default), "walking", "bicycling" or "transit".
+#'
+#' @param key Google Maps API key. Defaults to the key set by
+#'  \code{set.api.key("THISISMYKEY")}.
+#'
+#' @return A list with 5 named elements, or \code{NA} if the API could not be
+#'  reached:
+#' \itemize{
+#'    \item{\strong{status}: element status as returned by Google; "OK",
+#'    "NOT_FOUND" (origin or destination could not be geocoded) or
+#'    "ZERO_RESULTS" (no route between the points). Note that these differ from
+#'    the status values of \code{gmapsdistance()}.}
+#'    \item{\strong{distance_text}: human readable distance, e.g. "4.2 km".}
+#'    \item{\strong{distance_value}: distance in meters; \code{NA} when status is
+#'    not "OK".}
+#'    \item{\strong{duration_text}: human readable travel time, e.g. "17 mins".}
+#'    \item{\strong{duration_value}: travel time in seconds; \code{NA} when
+#'    status is not "OK".}
+#'  }
+#'
+#' @seealso \code{\link{gmapsdistance}} for multiple origins / destinations,
+#'  departure and arrival times, traffic models and route restrictions.
+#'
+#' @examples
+#' \dontshow{set.api.key(Sys.getenv("GOOGLE_API_KEY"))}
+#' \dontrun{
+#' # walking distance between two London stations
+#' distance_single(origin = "King's Cross St. Pancras, London, UK",
+#'                 destination = "Victoria, London, UK",
+#'                 mode = "walking")
+#' }
+#'
 #' @export
 #'
 #' @importFrom httr content
 #' @importFrom httr GET
 #' @importFrom jsonlite fromJSON
-#' @importFrom magrittr %>%
-#' @importFrom magrittr extract2
 
 distance_single <- function(origin,
                             destination,

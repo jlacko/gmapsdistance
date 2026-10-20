@@ -3,8 +3,8 @@
 export(distance_single)
 export(gmapsdistance)
 export(set.api.key)
-importFrom(httr,GET)
-importFrom(httr,content)
+importFrom(httr,
+  GET,
+  content
+)
 importFrom(jsonlite,fromJSON)
-importFrom(magrittr,"%>%")
-importFrom(magrittr,extract2)
