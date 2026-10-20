@@ -88,16 +88,13 @@ distance_single <- function(origin,
   # route level result - the single element of the single row
   element <- body$rows$elements[[1]]
 
-  # missing values (e.g. place not found, no route) become NA
-  na_if_null <- function(x) if (is.null(x)) NA else x
-
-  # compose the result object
+  # compose the result object; missing values (e.g. place not found, no route) become NA
   list(
     status = element$status,
-    distance_text = na_if_null(element$distance$text),
-    distance_value = na_if_null(element$distance$value),
-    duration_text = na_if_null(element$duration$text),
-    duration_value = na_if_null(element$duration$value)
+    distance_text = (\(x) if (is.null(x)) NA else x)(element$distance$text),
+    distance_value = (\(x) if (is.null(x)) NA else x)(element$distance$value),
+    duration_text = (\(x) if (is.null(x)) NA else x)(element$duration$text),
+    duration_value = (\(x) if (is.null(x)) NA else x)(element$duration$value)
   )
 
 }
