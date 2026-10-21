@@ -88,6 +88,51 @@ test_that("invalid input is rejected before calling the API", {
     "defined only for mode = 'WALK'"
   )
 
+  # unknown traffic model
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    traffic_model = "bflm",
+                    key = "irrelevant"),
+    "Traffic model not recognized"
+  )
+
+  # legacy traffic model, as used by gmapsdistance()
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    traffic_model = "pessimistic",
+                    key = "irrelevant"),
+    "use traffic_model = 'PESSIMISTIC' instead"
+  )
+
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    traffic_model = "None",
+                    key = "irrelevant"),
+    "use traffic_model = NULL instead"
+  )
+
+  # more than one traffic model
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    traffic_model = c("PESSIMISTIC", "OPTIMISTIC"),
+                    key = "irrelevant"),
+    "A single traffic model is expected"
+  )
+
+  # traffic model while walking
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    mode = "WALK",
+                    traffic_model = "PESSIMISTIC",
+                    key = "irrelevant"),
+    "Traffic models are defined only for mode = 'DRIVE'"
+  )
+
 })
 
 test_that("place not found is reported, not silently dropped", {
@@ -103,9 +148,9 @@ test_that("place not found is reported, not silently dropped", {
 
   # all elements present, but empty
   expect_named(not_found, c("status", "distance_text", "distance_value",
-                            "duration_text", "duration_value"))
+                            "duration_base", "duration_traffic"))
   expect_true(is.na(not_found$distance_value))
-  expect_true(is.na(not_found$duration_value))
+  expect_true(is.na(not_found$duration_base))
 
 })
 

@@ -52,6 +52,16 @@
 #'  Avoiding is a preference, not a guarantee: Google avoids the features where
 #'  reasonable, so a route may still include them.
 #'
+#' @param traffic_model The assumptions to use when estimating travel time in
+#'  traffic, using the traffic model names of the Routes API. One of
+#'  "BEST_GUESS", "PESSIMISTIC" or "OPTIMISTIC"; defined only for mode "DRIVE".
+#'  Default is \code{NULL}, i.e. traffic is not considered.
+#'
+#'  Traffic is estimated for the time of the request. Note that requests with a
+#'  traffic model use traffic aware routing, which Google bills at a higher
+#'  rate, and that the route itself (and so the distance) may differ from the
+#'  route without traffic.
+#'
 #' @return A list with 5 named elements, each a vector with one value per
 #'  origin / destination pair, or \code{NA} if the API could not be reached:
 #' \itemize{
@@ -62,13 +72,16 @@
 #'    \item{\strong{distance_text}: human readable distance, e.g. "4.2 km".}
 #'    \item{\strong{distance_value}: distance in meters; \code{NA} when status is
 #'    not "OK".}
-#'    \item{\strong{duration_text}: human readable travel time, e.g. "17 mins".}
-#'    \item{\strong{duration_value}: travel time in seconds; \code{NA} when
+#'    \item{\strong{duration_base}: travel time in seconds, without
+#'    considering traffic; \code{NA} when status is not "OK".}
+#'    \item{\strong{duration_traffic}: travel time in seconds, considering
+#'    traffic as estimated by the traffic model; the same as
+#'    \code{duration_base} when no traffic model is given. \code{NA} when
 #'    status is not "OK".}
 #'  }
 #'
 #' @seealso \code{\link{gmapsdistance}} for all combinations of origins and
-#'  destinations, departure and arrival times and traffic models.
+#'  destinations, and for departure and arrival times.
 #'
 #' @examples
 #' \dontshow{set.api.key(Sys.getenv("GOOGLE_API_KEY"))}
@@ -86,6 +99,11 @@
 #' distance_routes(origin = "Washington DC",
 #'                 destination = "New York City NY",
 #'                 avoid = "tolls")
+#'
+#' # driving time from King's Cross to Heathrow, expecting bad traffic
+#' distance_routes(origin = "King's Cross St. Pancras, London, UK",
+#'                 destination = "Heathrow Airport, London, UK",
+#'                 traffic_model = "PESSIMISTIC")
 #' }
 #'
 #' @export
@@ -98,7 +116,8 @@ distance_routes <- function(origin,
                             destination,
                             mode = "DRIVE",
                             key = get.api.key(),
-                            avoid = NULL
+                            avoid = NULL,
+                            traffic_model = NULL
                             ) {
 
   # input validation - length
@@ -168,6 +187,46 @@ distance_routes <- function(origin,
 
   }
 
+  # input validation - traffic model, named as in the Routes API
+  if (!is.null(traffic_model)) {
+
+    if (length(traffic_model) != 1) {
+
+      stop("A single traffic model is expected.")
+
+    }
+
+    # legacy traffic models, as used by gmapsdistance()
+    if (traffic_model == "None") {
+
+      stop("Traffic model 'None' is a legacy value, as used by gmapsdistance(); ",
+           "use traffic_model = NULL instead.")
+
+    }
+
+    if (traffic_model %in% c("best_guess", "pessimistic", "optimistic")) {
+
+      stop("Traffic model '", traffic_model, "' is a legacy Distance Matrix API value, ",
+           "as used by gmapsdistance(); use traffic_model = '", toupper(traffic_model),
+           "' instead.")
+
+    }
+
+    if (!traffic_model %in% c("BEST_GUESS", "PESSIMISTIC", "OPTIMISTIC")) {
+
+      stop("Traffic model not recognized. Traffic model should be one of ",
+           "'BEST_GUESS', 'PESSIMISTIC', 'OPTIMISTIC'")
+
+    }
+
+    if (mode != "DRIVE") {
+
+      stop("Traffic models are defined only for mode = 'DRIVE'.")
+
+    }
+
+  }
+
   # Routes API does not geocode "lat,long" strings; coordinates go as latLng instead
   waypoints <- lapply(c(origin, destination), \(x) {
     coords <- regmatches(x, regexec("^\\s*(-?[0-9.]+)\\s*,\\s*(-?[0-9.]+)\\s*$", x))[[1]]
@@ -193,6 +252,14 @@ distance_routes <- function(origin,
 
   }
 
+  # traffic model requires the (more expensive) traffic aware optimal routing; without
+  # it routing ignores traffic and both durations are the same
+  traffic <- if (is.null(traffic_model)) {
+    list()
+  } else {
+    list(routingPreference = "TRAFFIC_AWARE_OPTIMAL", trafficModel = traffic_model)
+  }
+
   # one call per pair - a single matrix call would be billed for all n x n elements
   for (i in seq_len(n)) {
 
@@ -203,12 +270,14 @@ distance_routes <- function(origin,
                  httr::add_headers(
                    `X-Goog-Api-Key` = gsub(" ", "", key),
                    `X-Goog-FieldMask` = paste("status", "condition", "distanceMeters",
-                                              "duration", "localizedValues", sep = ",")
+                                              "duration", "staticDuration",
+                                              "localizedValues", sep = ",")
                  ),
-                 body = list(origins = waypoints[i],
-                             destinations = waypoints[n + i],
-                             travelMode = mode,
-                             units = "METRIC"),
+                 body = c(list(origins = waypoints[i],
+                               destinations = waypoints[n + i],
+                               travelMode = mode,
+                               units = "METRIC"),
+                          traffic),
                  encode = "json"),
       # nocov start
       error = function(e) NULL
@@ -272,8 +341,8 @@ distance_routes <- function(origin,
       status = status,
       distance_text = (\(x) if (is.null(x)) NA else x)(element$localizedValues$distance$text),
       distance_value = (\(x) as.numeric(if (is.null(x)) missing_value else x))(element$distanceMeters),
-      duration_text = (\(x) if (is.null(x)) NA else x)(element$localizedValues$duration$text),
-      duration_value = (\(x) if (is.null(x)) as.numeric(missing_value) else as.numeric(sub("s$", "", x)))(element$duration)
+      duration_base = (\(x) if (is.null(x)) as.numeric(missing_value) else as.numeric(sub("s$", "", x)))(element$staticDuration),
+      duration_traffic = (\(x) if (is.null(x)) as.numeric(missing_value) else as.numeric(sub("s$", "", x)))(element$duration)
     )
 
   } # / end for cycle

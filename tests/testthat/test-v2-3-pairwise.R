@@ -18,7 +18,7 @@ test_that("pairwise works", {
 
   # pairwise = 3 results in every element (and not 3x3 = 9)
   expect_named(driving, c("status", "distance_text", "distance_value",
-                          "duration_text", "duration_value"))
+                          "duration_base", "duration_traffic"))
   expect_true(all(lengths(driving) == 3))
 
   # results follow the order of the pairs
@@ -56,7 +56,7 @@ test_that("one bad apple doesn't break whole pipe", {
   # values for the good pair only
   expect_gt(driving$distance_value[1], 0)
   expect_true(all(is.na(driving$distance_value[2:3])))
-  expect_true(all(is.na(driving$duration_value[2:3])))
+  expect_true(all(is.na(driving$duration_base[2:3])))
 
 })
 
@@ -74,6 +74,6 @@ test_that("identity pair has zero distance", {
 
   # zero, and not missing - Google omits zero values from its response
   expect_equal(identity$distance_value[1], 0)
-  expect_equal(identity$duration_value[1], 0)
+  expect_equal(identity$duration_base[1], 0)
 
 })

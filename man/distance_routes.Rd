@@ -9,7 +9,8 @@ distance_routes(
   destination,
   mode = "DRIVE",
   key = get.api.key(),
-  avoid = NULL
+  avoid = NULL,
+  traffic_model = NULL
 )
 }
 \arguments{
@@ -47,6 +48,16 @@ are also a valid input as long as they can be identified by Google Maps.}
 
  Avoiding is a preference, not a guarantee: Google avoids the features where
  reasonable, so a route may still include them.}
+
+\item{traffic_model}{The assumptions to use when estimating travel time in
+ traffic, using the traffic model names of the Routes API. One of
+ "BEST_GUESS", "PESSIMISTIC" or "OPTIMISTIC"; defined only for mode "DRIVE".
+ Default is \code{NULL}, i.e. traffic is not considered.
+
+ Traffic is estimated for the time of the request. Note that requests with a
+ traffic model use traffic aware routing, which Google bills at a higher
+ rate, and that the route itself (and so the distance) may differ from the
+ route without traffic.}
 }
 \value{
 A list with 5 named elements, each a vector with one value per
@@ -59,8 +70,11 @@ A list with 5 named elements, each a vector with one value per
    \item{\strong{distance_text}: human readable distance, e.g. "4.2 km".}
    \item{\strong{distance_value}: distance in meters; \code{NA} when status is
    not "OK".}
-   \item{\strong{duration_text}: human readable travel time, e.g. "17 mins".}
-   \item{\strong{duration_value}: travel time in seconds; \code{NA} when
+   \item{\strong{duration_base}: travel time in seconds, without
+   considering traffic; \code{NA} when status is not "OK".}
+   \item{\strong{duration_traffic}: travel time in seconds, considering
+   traffic as estimated by the traffic model; the same as
+   \code{duration_base} when no traffic model is given. \code{NA} when
    status is not "OK".}
  }
 }
@@ -99,10 +113,15 @@ distance_routes(origin = c("London, UK", "Prague, CZ"),
 distance_routes(origin = "Washington DC",
                 destination = "New York City NY",
                 avoid = "tolls")
+
+# driving time from King's Cross to Heathrow, expecting bad traffic
+distance_routes(origin = "King's Cross St. Pancras, London, UK",
+                destination = "Heathrow Airport, London, UK",
+                traffic_model = "PESSIMISTIC")
 }
 
 }
 \seealso{
 \code{\link{gmapsdistance}} for all combinations of origins and
- destinations, departure and arrival times and traffic models.
+ destinations, and for departure and arrival times.
 }
