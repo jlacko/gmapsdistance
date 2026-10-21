@@ -75,11 +75,12 @@ test_that("pairwise distances work", {
     key = Sys.getenv("GOOGLE_API_KEY")
   )
 
-  # one value per pair, in every element
+  # one row per pair
   expect_named(pairs, c("origin", "destination", "status",
                         "distance_text", "distance_value",
                         "duration_base", "duration_traffic"))
-  expect_true(all(lengths(pairs) == 3))
+  expect_s3_class(pairs, "data.frame")
+  expect_equal(nrow(pairs), 3)
 
   # one bad apple doesn't break the whole pipe
   expect_equal(pairs$status, c("OK", "OK", "NOT_FOUND"))

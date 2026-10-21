@@ -16,11 +16,12 @@ test_that("pairwise works", {
   # status = character vector
   expect_vector(driving$status, ptype = character())
 
-  # pairwise = 3 results in every element (and not 3x3 = 9)
+  # pairwise = a data frame of 3 rows (and not 3x3 = 9)
   expect_named(driving, c("origin", "destination", "status",
                           "distance_text", "distance_value",
                           "duration_base", "duration_traffic"))
-  expect_true(all(lengths(driving) == 3))
+  expect_s3_class(driving, "data.frame")
+  expect_equal(nrow(driving), 3)
 
   # origins and destinations repeated as provided
   expect_equal(driving$origin, c("Washington DC", "Miami FL", "Seattle WA"))
@@ -32,7 +33,7 @@ test_that("pairwise works", {
 
 })
 
-test_that("single pair returns single values", {
+test_that("single pair returns a single row", {
   skip_on_cran() # because API key...
 
   driving <- distance_routes(
@@ -41,7 +42,8 @@ test_that("single pair returns single values", {
     key = Sys.getenv("GOOGLE_API_KEY")
   )
 
-  expect_true(all(lengths(driving) == 1))
+  expect_s3_class(driving, "data.frame")
+  expect_equal(nrow(driving), 1)
 
 })
 

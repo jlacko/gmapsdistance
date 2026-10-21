@@ -27,7 +27,8 @@ Every API call costs money, so avoid running the full suite in loops.
   `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses. `avoid` becomes `routeModifiers` on each
   origin (the matrix method rejects them at top level; it does not support `avoidTunnels`).
   `traffic_model` sets `routingPreference = TRAFFIC_AWARE_OPTIMAL` (Pro SKU, DRIVE only);
-  results carry `duration_base` (`staticDuration`) and `duration_traffic` (`duration`).
+  Returns a data frame, one row per pair (`NA` if the API can't be reached), with
+  `duration_base` (`staticDuration`) and `duration_traffic` (`duration`).
   `departure` / `arrival` are POSIXct (length 1 or one per pair), sent as UTC RFC 3339
   `departureTime` / `arrivalTime`; a road departure needs `routingPreference = TRAFFIC_AWARE`.
   **Pairwise only, by design:** matrix output, `shape` and `combinations = "all"` are not

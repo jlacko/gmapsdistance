@@ -81,8 +81,9 @@
 #'  mode "TRANSIT", and may be in the past. Default is \code{NULL}, i.e. no
 #'  arrival time. Departure and arrival times can not both be given.
 #'
-#' @return A list with 7 named elements, each a vector with one value per
-#'  origin / destination pair, or \code{NA} if the API could not be reached:
+#' @return A data frame with one row per origin / destination pair, in the
+#'  order of the input, and 7 columns; or \code{NA} if the API could not be
+#'  reached:
 #' \itemize{
 #'    \item{\strong{origin}: the origins, as provided on input.}
 #'    \item{\strong{destination}: the destinations, as provided on input.}
@@ -451,9 +452,10 @@ distance_routes <- function(origin,
 
   } # / end for cycle
 
-  # compose the result object - one vector per field, one value per pair
+  # compose the result object - a data frame, one column per field and one row per pair
   sapply(names(results[[1]]),
          \(field) unlist(lapply(results, \(pair) pair[[field]])),
-         simplify = FALSE)
+         simplify = FALSE) |>
+    as.data.frame()
 
 }
