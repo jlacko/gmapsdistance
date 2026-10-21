@@ -227,6 +227,27 @@ test_that("reserved characters in place names do not break the query", {
 
 })
 
+test_that("cruel & unusual encoding works", {
+  skip_on_cran() # because API key...
+
+  # Czech diacritics and Cyrillic, sent as UTF-8 in the JSON body
+  cruel <- distance_routes(
+    origin = "nábřeží Kapitána Jaroše 1000/7, Prague CZ",
+    destination = "вулиця Хрещатик, Київ",
+    key = Sys.getenv("GOOGLE_API_KEY")
+  )
+
+  expect_equal(cruel$status, "OK")
+
+  # Prague to Kyiv is well over a thousand kilometres by road
+  expect_gt(cruel$distance_value, 1000000)
+
+  # and the places come back as they went in
+  expect_equal(cruel$origin, "nábřeží Kapitána Jaroše 1000/7, Prague CZ")
+  expect_equal(cruel$destination, "вулиця Хрещатик, Київ")
+
+})
+
 test_that("coordinates are accepted as origin / destination", {
   skip_on_cran() # because API key...
 
