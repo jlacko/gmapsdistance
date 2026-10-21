@@ -1,4 +1,4 @@
-## version 4.1.0 (2026-10-XX)
+## version 4.1.0 (2026-10-23)
 
 - [!] the Distance Matrix API has transitioned to Legacy status and accepts no new subscriptions
 - [!] new `distance_routes()` function has been introduced, mapping to new Routes API (note that moving to the new API may require changes in Google API settings)
