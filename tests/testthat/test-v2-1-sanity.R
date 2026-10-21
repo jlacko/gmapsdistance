@@ -76,7 +76,8 @@ test_that("pairwise distances work", {
   )
 
   # one value per pair, in every element
-  expect_named(pairs, c("status", "distance_text", "distance_value",
+  expect_named(pairs, c("origin", "destination", "status",
+                        "distance_text", "distance_value",
                         "duration_base", "duration_traffic"))
   expect_true(all(lengths(pairs) == 3))
 
@@ -173,5 +174,61 @@ test_that("traffic model works", {
   expect_gte(pessimistic$duration_traffic, optimistic$duration_traffic)
   # gt would be better in principle, but in practice API _can_
   # return equal times for good & bad traffic (should not, but does...)
+
+})
+
+test_that("departure and arrival times work", {
+  skip_on_cran() # because API key...
+
+  # day after tomorrow, London time
+  day <- as.character(Sys.Date() + 2)
+
+  rush_hour <- distance_routes(
+    origin = "King's Cross St. Pancras, London, UK",
+    destination = "Heathrow Airport, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    departure = as.POSIXct(paste(day, "08:00"), tz = "Europe/London")
+  )
+
+  night <- distance_routes(
+    origin = "King's Cross St. Pancras, London, UK",
+    destination = "Heathrow Airport, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    departure = as.POSIXct(paste(day, "03:00"), tz = "Europe/London")
+  )
+
+  # public transport - arrival, and departure in the past
+  arrival <- distance_routes(
+    origin = "King's Cross St. Pancras, London, UK",
+    destination = "Heathrow Airport, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "TRANSIT",
+    arrival = as.POSIXct(paste(day, "09:00"), tz = "Europe/London")
+  )
+
+  yesterday <- distance_routes(
+    origin = "King's Cross St. Pancras, London, UK",
+    destination = "Heathrow Airport, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "TRANSIT",
+    departure = Sys.time() - 86400
+  )
+
+  # one departure per pair
+  per_pair <- distance_routes(
+    origin = c("King's Cross St. Pancras, London, UK", "Heathrow Airport, London, UK"),
+    destination = c("Heathrow Airport, London, UK", "King's Cross St. Pancras, London, UK"),
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    departure = as.POSIXct(paste(day, c("08:00", "18:00")), tz = "Europe/London")
+  )
+
+  expect_equal(rush_hour$status, "OK")
+  expect_equal(night$status, "OK")
+  expect_equal(arrival$status, "OK")
+  expect_equal(yesterday$status, "OK")
+  expect_equal(per_pair$status, c("OK", "OK"))
+
+  # rush hour = longer time in traffic than at night...
+  expect_gte(rush_hour$duration_traffic, night$duration_traffic)
 
 })

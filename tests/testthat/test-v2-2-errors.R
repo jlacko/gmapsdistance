@@ -133,6 +133,64 @@ test_that("invalid input is rejected before calling the API", {
     "Traffic models are defined only for mode = 'DRIVE'"
   )
 
+  tomorrow <- Sys.time() + 86400
+
+  # departure and arrival at the same time
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    mode = "TRANSIT",
+                    departure = tomorrow,
+                    arrival = tomorrow,
+                    key = "irrelevant"),
+    "can not both be given"
+  )
+
+  # arrival by car
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    arrival = tomorrow,
+                    key = "irrelevant"),
+    "Arrival times are defined only for mode = 'TRANSIT'"
+  )
+
+  # departure in the past, by car
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    departure = Sys.time() - 86400,
+                    key = "irrelevant"),
+    "has to be some time in the future"
+  )
+
+  # departure as text, not date-time
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    departure = "2026-11-02 08:00",
+                    key = "irrelevant"),
+    "should be a date-time \\(POSIXct\\)"
+  )
+
+  # neither one for all, nor one per pair
+  expect_error(
+    distance_routes(origin = c("Prague", "Brno", "Ostrava"),
+                    destination = c("Vienna", "Bratislava", "Krakow"),
+                    departure = tomorrow + c(0, 3600),
+                    key = "irrelevant"),
+    "got 2 for 3 pair\\(s\\)"
+  )
+
+  # missing departure
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    departure = as.POSIXct(NA),
+                    key = "irrelevant"),
+    "can not be missing"
+  )
+
 })
 
 test_that("place not found is reported, not silently dropped", {
@@ -147,7 +205,8 @@ test_that("place not found is reported, not silently dropped", {
   expect_equal(not_found$status, "NOT_FOUND")
 
   # all elements present, but empty
-  expect_named(not_found, c("status", "distance_text", "distance_value",
+  expect_named(not_found, c("origin", "destination", "status",
+                            "distance_text", "distance_value",
                             "duration_base", "duration_traffic"))
   expect_true(is.na(not_found$distance_value))
   expect_true(is.na(not_found$duration_base))

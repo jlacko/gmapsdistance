@@ -10,7 +10,9 @@ distance_routes(
   mode = "DRIVE",
   key = get.api.key(),
   avoid = NULL,
-  traffic_model = NULL
+  traffic_model = NULL,
+  departure = NULL,
+  arrival = NULL
 )
 }
 \arguments{
@@ -54,15 +56,36 @@ are also a valid input as long as they can be identified by Google Maps.}
  "BEST_GUESS", "PESSIMISTIC" or "OPTIMISTIC"; defined only for mode "DRIVE".
  Default is \code{NULL}, i.e. traffic is not considered.
 
- Traffic is estimated for the time of the request. Note that requests with a
- traffic model use traffic aware routing, which Google bills at a higher
- rate, and that the route itself (and so the distance) may differ from the
+ Traffic is estimated for the departure time, or for the time of the request
+ when no departure is given. Note that requests with a traffic model use
+ traffic aware routing, which Google bills at a higher rate, and that the
+ route itself (and so the distance) may differ from the
  route without traffic.}
+
+\item{departure}{The departure time, as a date-time (\code{POSIXct}) - a
+ single time for all pairs, or one per origin / destination pair. Default is
+ \code{NULL}, i.e. departing at the time of the request.
+
+ The time has to be in the future, except for mode "TRANSIT". For modes
+ "DRIVE", "TWO_WHEELER" and "TRUCK" a departure time turns on traffic aware
+ routing, which Google bills at a higher rate; \code{duration_traffic} is
+ then the travel time in traffic at the time of departure.
+
+ Note that \code{as.POSIXct()} without a \code{tz} argument uses the time
+ zone of your computer; give the time zone of the trip explicitly, e.g.
+ \code{as.POSIXct("2026-11-02 08:00", tz = "Europe/London")}.}
+
+\item{arrival}{The arrival time, as a date-time (\code{POSIXct}) - a single
+time for all pairs, or one per origin / destination pair; defined only for
+mode "TRANSIT", and may be in the past. Default is \code{NULL}, i.e. no
+arrival time. Departure and arrival times can not both be given.}
 }
 \value{
-A list with 5 named elements, each a vector with one value per
+A list with 7 named elements, each a vector with one value per
  origin / destination pair, or \code{NA} if the API could not be reached:
 \itemize{
+   \item{\strong{origin}: the origins, as provided on input.}
+   \item{\strong{destination}: the destinations, as provided on input.}
    \item{\strong{status}: route status; "OK", "NOT_FOUND" (origin or
    destination could not be geocoded) or "ZERO_RESULTS" (no route between
    the points). Note that these differ from the status values of
@@ -118,10 +141,21 @@ distance_routes(origin = "Washington DC",
 distance_routes(origin = "King's Cross St. Pancras, London, UK",
                 destination = "Heathrow Airport, London, UK",
                 traffic_model = "PESSIMISTIC")
+
+# the same, departing in the morning rush hour, London time
+distance_routes(origin = "King's Cross St. Pancras, London, UK",
+                destination = "Heathrow Airport, London, UK",
+                departure = as.POSIXct("2026-11-02 08:00", tz = "Europe/London"))
+
+# public transport, arriving at 9 AM
+distance_routes(origin = "King's Cross St. Pancras, London, UK",
+                destination = "Heathrow Airport, London, UK",
+                mode = "TRANSIT",
+                arrival = as.POSIXct("2026-11-02 09:00", tz = "Europe/London"))
 }
 
 }
 \seealso{
 \code{\link{gmapsdistance}} for all combinations of origins and
- destinations, and for departure and arrival times.
+ destinations.
 }

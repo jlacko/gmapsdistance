@@ -28,6 +28,8 @@ Every API call costs money, so avoid running the full suite in loops.
   origin (the matrix method rejects them at top level; it does not support `avoidTunnels`).
   `traffic_model` sets `routingPreference = TRAFFIC_AWARE_OPTIMAL` (Pro SKU, DRIVE only);
   results carry `duration_base` (`staticDuration`) and `duration_traffic` (`duration`).
+  `departure` / `arrival` are POSIXct (length 1 or one per pair), sent as UTC RFC 3339
+  `departureTime` / `arrivalTime`; a road departure needs `routingPreference = TRAFFIC_AWARE`.
   **Pairwise only, by design:** matrix output, `shape` and `combinations = "all"` are not
   planned for `distance_routes()` - don't add them or list them as gaps. Those stay with
   `gmapsdistance()`.

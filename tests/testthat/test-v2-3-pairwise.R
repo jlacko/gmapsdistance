@@ -17,9 +17,14 @@ test_that("pairwise works", {
   expect_vector(driving$status, ptype = character())
 
   # pairwise = 3 results in every element (and not 3x3 = 9)
-  expect_named(driving, c("status", "distance_text", "distance_value",
+  expect_named(driving, c("origin", "destination", "status",
+                          "distance_text", "distance_value",
                           "duration_base", "duration_traffic"))
   expect_true(all(lengths(driving) == 3))
+
+  # origins and destinations repeated as provided
+  expect_equal(driving$origin, c("Washington DC", "Miami FL", "Seattle WA"))
+  expect_equal(driving$destination, c("Miami FL", "Seattle WA", "Washington DC"))
 
   # results follow the order of the pairs
   expect_gt(driving$distance_value[2], driving$distance_value[3]) # Miami -> Seattle is the longest...

@@ -57,14 +57,35 @@
 #'  "BEST_GUESS", "PESSIMISTIC" or "OPTIMISTIC"; defined only for mode "DRIVE".
 #'  Default is \code{NULL}, i.e. traffic is not considered.
 #'
-#'  Traffic is estimated for the time of the request. Note that requests with a
-#'  traffic model use traffic aware routing, which Google bills at a higher
-#'  rate, and that the route itself (and so the distance) may differ from the
+#'  Traffic is estimated for the departure time, or for the time of the request
+#'  when no departure is given. Note that requests with a traffic model use
+#'  traffic aware routing, which Google bills at a higher rate, and that the
+#'  route itself (and so the distance) may differ from the
 #'  route without traffic.
 #'
-#' @return A list with 5 named elements, each a vector with one value per
+#' @param departure The departure time, as a date-time (\code{POSIXct}) - a
+#'  single time for all pairs, or one per origin / destination pair. Default is
+#'  \code{NULL}, i.e. departing at the time of the request.
+#'
+#'  The time has to be in the future, except for mode "TRANSIT". For modes
+#'  "DRIVE", "TWO_WHEELER" and "TRUCK" a departure time turns on traffic aware
+#'  routing, which Google bills at a higher rate; \code{duration_traffic} is
+#'  then the travel time in traffic at the time of departure.
+#'
+#'  Note that \code{as.POSIXct()} without a \code{tz} argument uses the time
+#'  zone of your computer; give the time zone of the trip explicitly, e.g.
+#'  \code{as.POSIXct("2026-11-02 08:00", tz = "Europe/London")}.
+#'
+#' @param arrival The arrival time, as a date-time (\code{POSIXct}) - a single
+#'  time for all pairs, or one per origin / destination pair; defined only for
+#'  mode "TRANSIT", and may be in the past. Default is \code{NULL}, i.e. no
+#'  arrival time. Departure and arrival times can not both be given.
+#'
+#' @return A list with 7 named elements, each a vector with one value per
 #'  origin / destination pair, or \code{NA} if the API could not be reached:
 #' \itemize{
+#'    \item{\strong{origin}: the origins, as provided on input.}
+#'    \item{\strong{destination}: the destinations, as provided on input.}
 #'    \item{\strong{status}: route status; "OK", "NOT_FOUND" (origin or
 #'    destination could not be geocoded) or "ZERO_RESULTS" (no route between
 #'    the points). Note that these differ from the status values of
@@ -81,7 +102,7 @@
 #'  }
 #'
 #' @seealso \code{\link{gmapsdistance}} for all combinations of origins and
-#'  destinations, and for departure and arrival times.
+#'  destinations.
 #'
 #' @examples
 #' \dontshow{set.api.key(Sys.getenv("GOOGLE_API_KEY"))}
@@ -104,6 +125,17 @@
 #' distance_routes(origin = "King's Cross St. Pancras, London, UK",
 #'                 destination = "Heathrow Airport, London, UK",
 #'                 traffic_model = "PESSIMISTIC")
+#'
+#' # the same, departing in the morning rush hour, London time
+#' distance_routes(origin = "King's Cross St. Pancras, London, UK",
+#'                 destination = "Heathrow Airport, London, UK",
+#'                 departure = as.POSIXct("2026-11-02 08:00", tz = "Europe/London"))
+#'
+#' # public transport, arriving at 9 AM
+#' distance_routes(origin = "King's Cross St. Pancras, London, UK",
+#'                 destination = "Heathrow Airport, London, UK",
+#'                 mode = "TRANSIT",
+#'                 arrival = as.POSIXct("2026-11-02 09:00", tz = "Europe/London"))
 #' }
 #'
 #' @export
@@ -117,7 +149,9 @@ distance_routes <- function(origin,
                             mode = "DRIVE",
                             key = get.api.key(),
                             avoid = NULL,
-                            traffic_model = NULL
+                            traffic_model = NULL,
+                            departure = NULL,
+                            arrival = NULL
                             ) {
 
   # input validation - length
@@ -227,6 +261,58 @@ distance_routes <- function(origin,
 
   }
 
+  # input validation - departure and arrival times, as date-times with a time zone
+  if (!is.null(departure) && !is.null(arrival)) {
+
+    stop("Departure and arrival times can not both be given; use one of them.")
+
+  }
+
+  if (!is.null(arrival) && mode != "TRANSIT") {
+
+    stop("Arrival times are defined only for mode = 'TRANSIT'.")
+
+  }
+
+  times <- list(departure = departure, arrival = arrival)
+
+  for (time_name in names(times)) {
+
+    time <- times[[time_name]]
+
+    if (is.null(time)) next
+
+    if (!inherits(time, "POSIXct")) {
+
+      stop("The ", time_name, " time should be a date-time (POSIXct), such as ",
+           "as.POSIXct(\"2026-11-02 08:00\", tz = \"Europe/London\").")
+
+    }
+
+    # one time for all pairs, or one per pair
+    if (!length(time) %in% c(1, length(origin))) {
+
+      stop("A single ", time_name, " time, or one per origin / destination pair, ",
+           "is expected; got ", length(time), " for ", length(origin), " pair(s).")
+
+    }
+
+    if (anyNA(time)) {
+
+      stop("The ", time_name, " time can not be missing (NA).")
+
+    }
+
+    # only public transport timetables reach to the past
+    if (mode != "TRANSIT" && any(time <= Sys.time())) {
+
+      stop("The ", time_name, " time has to be some time in the future; ",
+           "times in the past are defined only for mode = 'TRANSIT'.")
+
+    }
+
+  }
+
   # Routes API does not geocode "lat,long" strings; coordinates go as latLng instead
   waypoints <- lapply(c(origin, destination), \(x) {
     coords <- regmatches(x, regexec("^\\s*(-?[0-9.]+)\\s*,\\s*(-?[0-9.]+)\\s*$", x))[[1]]
@@ -252,12 +338,27 @@ distance_routes <- function(origin,
 
   }
 
-  # traffic model requires the (more expensive) traffic aware optimal routing; without
-  # it routing ignores traffic and both durations are the same
-  traffic <- if (is.null(traffic_model)) {
-    list()
-  } else {
+  # traffic model requires the (more expensive) traffic aware optimal routing, and
+  # departure by road traffic aware routing at least; without either routing ignores
+  # traffic and both durations are the same
+  traffic <- if (!is.null(traffic_model)) {
     list(routingPreference = "TRAFFIC_AWARE_OPTIMAL", trafficModel = traffic_model)
+  } else if (!is.null(departure) && mode %in% c("DRIVE", "TWO_WHEELER", "TRUCK")) {
+    list(routingPreference = "TRAFFIC_AWARE")
+  } else {
+    list()
+  }
+
+  # departure or arrival time of each pair, as UTC timestamps the Routes API expects
+  timing <- vector("list", n)
+
+  for (time_name in names(times)) {
+
+    if (is.null(times[[time_name]])) next
+
+    timing <- lapply(rep_len(format(times[[time_name]], "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"), n),
+                     \(x) structure(list(x), names = paste0(time_name, "Time")))
+
   }
 
   # one call per pair - a single matrix call would be billed for all n x n elements
@@ -277,7 +378,8 @@ distance_routes <- function(origin,
                                destinations = waypoints[n + i],
                                travelMode = mode,
                                units = "METRIC"),
-                          traffic),
+                          traffic,
+                          timing[[i]]),
                  encode = "json"),
       # nocov start
       error = function(e) NULL
@@ -338,6 +440,8 @@ distance_routes <- function(origin,
 
     # result for the current pair; missing texts (e.g. place not found, no route) become NA
     results[[i]] <- list(
+      origin = origin[i],
+      destination = destination[i],
       status = status,
       distance_text = (\(x) if (is.null(x)) NA else x)(element$localizedValues$distance$text),
       distance_value = (\(x) as.numeric(if (is.null(x)) missing_value else x))(element$distanceMeters),
