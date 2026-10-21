@@ -252,3 +252,24 @@ test_that("walking from Marathon to Athens works", {
   expect_lt(marathon$distance_value, 45000)
 
 })
+
+test_that("walking in Valparaíso works - negative coordinates", {
+  skip_on_cran() # because API key...
+
+  # from Plaza Sotomayor up the hill to La Sebastiana; southern & western hemisphere,
+  # so both latitude and longitude are negative
+  valparaiso <- distance_routes(
+    origin = "-33.0391,-71.6283",
+    destination = "-33.0463,-71.6165",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "WALK"
+  )
+
+  expect_equal(valparaiso$status, "OK")
+
+  # a short walk across town - a lost minus sign would put the points
+  # in a different hemisphere, with no walk between them at all
+  expect_gt(valparaiso$distance_value, 1000)
+  expect_lt(valparaiso$distance_value, 3000)
+
+})
