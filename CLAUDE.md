@@ -21,8 +21,10 @@ Every API call costs money, so avoid running the full suite in loops.
   builds the request URL by hand, calls the **XML** endpoint via `RCurl::getURL`, parses with
   `XML`, loops over every origin/destination pair (one request each) and returns a list of
   `Distance`, `Time`, `Status` (scalars, wide matrices or long data frames).
-- `R/distance_single.R` - `distance_single()`, newer single-pair function on the **JSON**
-  endpoint via `httr::GET` + `jsonlite`. This is the direction of the `JSON-dev` branch:
+- `R/distance_single.R` - `distance_single()`, newer single-pair function on the **Routes
+  API** (`computeRouteMatrix`, JSON POST with `X-Goog-Api-Key` / `X-Goog-FieldMask`
+  headers) via `httr::POST` + `jsonlite`. It maps Routes results back to the legacy
+  `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses. This is the direction of the `JSON-dev` branch:
   the intent is to eventually move `gmapsdistance()` onto the same httr/jsonlite approach
   and drop RCurl/XML.
 - `R/gmapsdistance-package.R` - package environment `pkg.env` holding the API key;

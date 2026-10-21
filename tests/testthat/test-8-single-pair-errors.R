@@ -52,6 +52,20 @@ test_that("reserved characters in place names do not break the query", {
 
 })
 
+test_that("coordinates are accepted as origin / destination", {
+  skip_on_cran() # because API key...
+
+  coords <- distance_single(
+    origin = "51.5308,-0.1238", # King's Cross St. Pancras
+    destination = "Victoria, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY")
+  )
+
+  expect_equal(coords$status, "OK")
+  expect_gt(coords$distance_value, 0)
+
+})
+
 test_that("an invalid API key raises Google's error", {
   skip_on_cran() # because internet...
 
@@ -59,7 +73,7 @@ test_that("an invalid API key raises Google's error", {
     distance_single(origin = "King's Cross St. Pancras, London, UK",
                     destination = "Victoria, London, UK",
                     key = "THIS-IS-NOT-A-VALID-KEY"),
-    "REQUEST_DENIED"
+    "API key not valid"
   )
 
 })

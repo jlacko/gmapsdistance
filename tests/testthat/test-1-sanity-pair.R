@@ -5,28 +5,28 @@ test_that("modes work", {
       origin = "King's Cross St. Pancras, London, UK",
       destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
-      mode = "driving"
+      mode = "DRIVE"
     )
 
   walking <- distance_single(
       origin = "King's Cross St. Pancras, London, UK",
       destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
-      mode = "walking"
+      mode = "WALK"
     )
 
   transit <- distance_single(
       origin = "King's Cross St. Pancras, London, UK",
       destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
-      mode = "transit"
+      mode = "TRANSIT"
     )
 
   bicycling <- distance_single(
       origin = "King's Cross St. Pancras, London, UK",
       destination = "Victoria, London, UK",
       key = Sys.getenv("GOOGLE_API_KEY"),
-      mode = "bicycling"
+      mode = "BICYCLE"
     )
 
 
@@ -42,5 +42,29 @@ test_that("modes work", {
 
   expect_gt(bicycling$duration_value, transit$duration_value) # Tube is faster than both bike...
   expect_gt(driving$duration_value, transit$duration_value) # ... and driving (in London)
+
+})
+
+test_that("regional modes work", {
+  skip_on_cran() # because API key...
+
+  # trucks are routed in London ...
+  truck <- distance_single(
+      origin = "King's Cross St. Pancras, London, UK",
+      destination = "Victoria, London, UK",
+      key = Sys.getenv("GOOGLE_API_KEY"),
+      mode = "TRUCK"
+    )
+
+  # ... motorbikes in Jakarta (not in London though)
+  two_wheeler <- distance_single(
+      origin = "Monas, Jakarta",
+      destination = "Kota Tua, Jakarta",
+      key = Sys.getenv("GOOGLE_API_KEY"),
+      mode = "TWO_WHEELER"
+    )
+
+  expect_equal(truck$status, "OK")
+  expect_equal(two_wheeler$status, "OK")
 
 })

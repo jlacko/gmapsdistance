@@ -4,7 +4,7 @@
 \alias{distance_single}
 \title{Compute Distance for a Single Pair with Google Maps}
 \usage{
-distance_single(origin, destination, mode = "driving", key = get.api.key())
+distance_single(origin, destination, mode = "DRIVE", key = get.api.key())
 }
 \arguments{
 \item{origin}{A single string containing the description of the starting
@@ -14,8 +14,12 @@ valid input as long as they can be identified by Google Maps.}
 \item{destination}{A single string containing the description of the end
 point. Should be the same format as the variable "origin".}
 
-\item{mode}{A string containing the mode of transportation desired. One of
-"driving" (default), "walking", "bicycling" or "transit".}
+\item{mode}{A string containing the mode of transportation desired, using
+ the travel mode names of the Routes API. One of "DRIVE" (default), "WALK",
+ "BICYCLE", "TRANSIT", "TWO_WHEELER" or "TRUCK".
+
+ Note that "TWO_WHEELER" (motorized two wheelers) and "TRUCK" are supported
+ only in some regions; elsewhere the status is "ZERO_RESULTS".}
 
 \item{key}{Google Maps API key. Defaults to the key set by
 \code{set.api.key("THISISMYKEY")}.}
@@ -24,10 +28,10 @@ point. Should be the same format as the variable "origin".}
 A list with 5 named elements, or \code{NA} if the API could not be
  reached:
 \itemize{
-   \item{\strong{status}: element status as returned by Google; "OK",
-   "NOT_FOUND" (origin or destination could not be geocoded) or
-   "ZERO_RESULTS" (no route between the points). Note that these differ from
-   the status values of \code{gmapsdistance()}.}
+   \item{\strong{status}: route status; "OK", "NOT_FOUND" (origin or
+   destination could not be geocoded) or "ZERO_RESULTS" (no route between
+   the points). Note that these differ from the status values of
+   \code{gmapsdistance()}.}
    \item{\strong{distance_text}: human readable distance, e.g. "4.2 km".}
    \item{\strong{distance_value}: distance in meters; \code{NA} when status is
    not "OK".}
@@ -37,14 +41,14 @@ A list with 5 named elements, or \code{NA} if the API could not be
  }
 }
 \description{
-The function distance_single uses the JSON interface of the Google Maps
-Distance Matrix API to compute the distance and travel time between a single
-origin and a single destination. In order to be able to use the function you
-will need an API key and enable the Distance Matrix API in the Google
+The function distance_single uses the Compute Route Matrix method of the
+Google Maps Routes API to compute the distance and travel time between a
+single origin and a single destination. In order to be able to use the
+function you will need an API key and enable the Routes API in the Google
 Developers Console. For more information about how to get a key, go to
-https://developers.google.com/maps/documentation/distance-matrix/get-api-key#key
-For more information about the Google Maps Distance Matrix API go to
-https://developers.google.com/maps/documentation/distance-matrix/intro?hl=en
+https://developers.google.com/maps/documentation/routes/get-api-key
+For more information about the Google Maps Routes API go to
+https://developers.google.com/maps/documentation/routes/compute_route_matrix
 }
 \details{
 Request level problems (such as an invalid API key or an exhausted quota)
@@ -60,7 +64,7 @@ gracefully: it emits a message and returns \code{NA}.
 # walking distance between two London stations
 distance_single(origin = "King's Cross St. Pancras, London, UK",
                 destination = "Victoria, London, UK",
-                mode = "walking")
+                mode = "WALK")
 }
 
 }
