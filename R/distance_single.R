@@ -30,6 +30,11 @@
 #'  Note that "TWO_WHEELER" (motorized two wheelers) and "TRUCK" are supported
 #'  only in some regions; elsewhere the status is "ZERO_RESULTS".
 #'
+#'  Note also that these values differ from the modes of transportation of
+#'  \code{gmapsdistance()} ("driving", "walking", "bicycling", "transit"), due to
+#'  the move from the legacy Distance Matrix API to the Routes API. The legacy
+#'  values are rejected with an error pointing to their Routes API equivalent.
+#'
 #' @param key Google Maps API key. Defaults to the key set by
 #'  \code{set.api.key("THISISMYKEY")}.
 #'
@@ -76,6 +81,18 @@ distance_single <- function(origin,
   if (!all(c(length(origin) == 1, length(destination) == 1, length(mode) == 1))) {
 
     stop("single distance pair is expected")
+
+  }
+
+  # input validation - legacy modes of transport, as used by gmapsdistance()
+  legacy_modes <- c(driving = "DRIVE", walking = "WALK",
+                    bicycling = "BICYCLE", transit = "TRANSIT")
+
+  if (mode %in% names(legacy_modes)) {
+
+    stop("Mode '", mode, "' is a legacy Distance Matrix API value, as used by ",
+         "gmapsdistance(). distance_single() uses the Routes API travel modes; ",
+         "use mode = '", legacy_modes[[mode]], "' instead.")
 
   }
 

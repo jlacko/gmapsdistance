@@ -19,7 +19,12 @@ point. Should be the same format as the variable "origin".}
  "BICYCLE", "TRANSIT", "TWO_WHEELER" or "TRUCK".
 
  Note that "TWO_WHEELER" (motorized two wheelers) and "TRUCK" are supported
- only in some regions; elsewhere the status is "ZERO_RESULTS".}
+ only in some regions; elsewhere the status is "ZERO_RESULTS".
+
+ Note also that these values differ from the modes of transportation of
+ \code{gmapsdistance()} ("driving", "walking", "bicycling", "transit"), due to
+ the move from the legacy Distance Matrix API to the Routes API. The legacy
+ values are rejected with an error pointing to their Routes API equivalent.}
 
 \item{key}{Google Maps API key. Defaults to the key set by
 \code{set.api.key("THISISMYKEY")}.}

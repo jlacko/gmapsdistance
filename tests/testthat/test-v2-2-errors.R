@@ -17,6 +17,15 @@ test_that("invalid input is rejected before calling the API", {
     "Mode of transportation not recognized"
   )
 
+  # legacy mode of transport, as used by gmapsdistance()
+  expect_error(
+    distance_single(origin = "Prague",
+                    destination = "Vienna",
+                    mode = "walking",
+                    key = "irrelevant"),
+    "use mode = 'WALK' instead"
+  )
+
 })
 
 test_that("place not found is reported, not silently dropped", {
