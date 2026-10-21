@@ -61,8 +61,3 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-
-      - name: Test coverage
-        if: runner.os == 'Linux'
-        run: covr::codecov()
-        shell: Rscript {0}
