@@ -88,11 +88,12 @@
 #'  arrival time. Departure and arrival times can not both be given.
 #'
 #' @return A data frame with one row per origin / destination pair, in the
-#'  order of the input, and 7 columns; or \code{NA} if the API could not be
+#'  order of the input, and 8 columns; or \code{NA} if the API could not be
 #'  reached:
 #' \itemize{
 #'    \item{\strong{origin}: the origins, as provided on input.}
 #'    \item{\strong{destination}: the destinations, as provided on input.}
+#'    \item{\strong{mode}: the mode of transportation, as provided on input.}
 #'    \item{\strong{status}: route status; "OK", "NOT_FOUND" (origin or
 #'    destination could not be geocoded) or "ZERO_RESULTS" (no route between
 #'    the points). Note that these differ from the status values of
@@ -449,6 +450,7 @@ distance_routes <- function(origin,
     results[[i]] <- list(
       origin = origin[i],
       destination = destination[i],
+      mode = mode,
       status = status,
       distance_text = (\(x) if (is.null(x)) NA else x)(element$localizedValues$distance$text),
       distance_value = (\(x) as.numeric(if (is.null(x)) missing_value else x))(element$distanceMeters),

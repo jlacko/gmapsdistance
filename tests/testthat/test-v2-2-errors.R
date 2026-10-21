@@ -205,7 +205,7 @@ test_that("place not found is reported, not silently dropped", {
   expect_equal(not_found$status, "NOT_FOUND")
 
   # all elements present, but empty
-  expect_named(not_found, c("origin", "destination", "status",
+  expect_named(not_found, c("origin", "destination", "mode", "status",
                             "distance_text", "distance_value",
                             "duration_base", "duration_traffic"))
   expect_true(is.na(not_found$distance_value))

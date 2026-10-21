@@ -17,15 +17,16 @@ test_that("pairwise works", {
   expect_vector(driving$status, ptype = character())
 
   # pairwise = a data frame of 3 rows (and not 3x3 = 9)
-  expect_named(driving, c("origin", "destination", "status",
+  expect_named(driving, c("origin", "destination", "mode", "status",
                           "distance_text", "distance_value",
                           "duration_base", "duration_traffic"))
   expect_s3_class(driving, "data.frame")
   expect_equal(nrow(driving), 3)
 
-  # origins and destinations repeated as provided
+  # origins, destinations and mode repeated as provided
   expect_equal(driving$origin, c("Washington DC", "Miami FL", "Seattle WA"))
   expect_equal(driving$destination, c("Miami FL", "Seattle WA", "Washington DC"))
+  expect_equal(driving$mode, rep("DRIVE", 3))
 
   # results follow the order of the pairs
   expect_gt(driving$distance_value[2], driving$distance_value[3]) # Miami -> Seattle is the longest...

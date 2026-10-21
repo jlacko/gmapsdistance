@@ -76,7 +76,7 @@ test_that("pairwise distances work", {
   )
 
   # one row per pair
-  expect_named(pairs, c("origin", "destination", "status",
+  expect_named(pairs, c("origin", "destination", "mode", "status",
                         "distance_text", "distance_value",
                         "duration_base", "duration_traffic"))
   expect_s3_class(pairs, "data.frame")
