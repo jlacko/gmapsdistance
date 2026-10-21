@@ -252,17 +252,3 @@ test_that("an invalid API key raises Google's error", {
   )
 
 })
-
-test_that("single pair API call fails gracefully", {
-  skip_on_cran() # because API key...
-  skip_if(RCurl::url.exists("www.google.com"), "the internet is on") # othervise it would be no fun...
-
-  expect_message(
-    res <- distance_routes(origin = "King's Cross St. Pancras, London, UK",
-                           destination = "Victoria, London, UK",
-                           key = Sys.getenv("GOOGLE_API_KEY"))
-  )
-
-  expect_true(is.na(res))
-
-})

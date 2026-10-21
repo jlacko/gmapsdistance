@@ -61,8 +61,9 @@ Every API call costs money, so avoid running the full suite in loops.
 - Anything touching the API starts with `skip_on_cran()`; pure input-validation tests
   should not hit the API and need no skip.
 - Prefer `expect_error(..., "pattern")` with the expected message over bare `expect_error()`.
-- Offline-failure tests skip when the internet is up; mocking (`local_mocked_bindings`)
-  is the way to exercise them deterministically.
+- Graceful-fail tests (`test-v1-6-graceful-fail.R`, `test-v2-4-graceful-fail.R`) skip when
+  the internet is up; the maintainer runs them manually from an offline computer. Don't
+  mock the connection (e.g. `local_mocked_bindings`) to exercise or "verify" them.
 
 ## Release
 
