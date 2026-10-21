@@ -82,3 +82,26 @@ test_that("identity pair has zero distance", {
   expect_equal(identity$duration_base[1], 0)
 
 })
+
+test_that("travel on public transport is faster at daytime", {
+  skip_on_cran() # because API key...
+
+  # the same trip twice, arriving at different times, New York time
+  day <- as.character(Sys.Date() + 2)
+
+  transit <- distance_routes(
+    origin = rep("Washington DC", 2),
+    destination = rep("New York City NY", 2),
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "TRANSIT",
+    arrival = as.POSIXct(paste(day, c("05:00:00",    # arrival at 5 AM = bad
+                                      "17:00:00")),  # arrival at 5 PM = good
+                         tz = "America/New_York")
+  )
+
+  expect_equal(transit$status, c("OK", "OK"))
+
+  # night trip takes longer than day trip
+  expect_lt(transit$duration_base[2], transit$duration_base[1])
+
+})

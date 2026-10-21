@@ -214,10 +214,10 @@ test_that("departure and arrival times work", {
     departure = Sys.time() - 86400
   )
 
-  # one departure per pair
+  # one departure per pair - the same trip at two different times
   per_pair <- distance_routes(
-    origin = c("King's Cross St. Pancras, London, UK", "Heathrow Airport, London, UK"),
-    destination = c("Heathrow Airport, London, UK", "King's Cross St. Pancras, London, UK"),
+    origin = rep("King's Cross St. Pancras, London, UK", 2),
+    destination = rep("Heathrow Airport, London, UK", 2),
     key = Sys.getenv("GOOGLE_API_KEY"),
     departure = as.POSIXct(paste(day, c("08:00", "18:00")), tz = "Europe/London")
   )
