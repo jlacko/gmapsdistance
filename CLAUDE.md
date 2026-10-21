@@ -24,9 +24,10 @@ Every API call costs money, so avoid running the full suite in loops.
 - `R/distance_routes.R` - `distance_routes()`, newer pairwise function (origin[i] to
   destination[i], one request per pair) on the **Routes API** (`computeRouteMatrix`, JSON POST with `X-Goog-Api-Key` / `X-Goog-FieldMask`
   headers) via `httr::POST` + `jsonlite`. It maps Routes results back to the legacy
-  `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses. This is the direction of the `JSON-dev` branch:
-  the intent is to eventually move `gmapsdistance()` onto the same httr/jsonlite approach
-  and drop RCurl/XML.
+  `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses.
+  **Pairwise only, by design:** matrix output, `shape` and `combinations = "all"` are not
+  planned for `distance_routes()` - don't add them or list them as gaps. Those stay with
+  `gmapsdistance()`.
 - `R/gmapsdistance-package.R` - package environment `pkg.env` holding the API key;
   `set.api.key()` (exported) / `get.api.key()` (internal, used as default for `key`).
 - `vignettes/vignette.Rmd` is **pre-computed**: edit `vignette.Rmd.orig` and run
