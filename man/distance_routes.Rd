@@ -17,11 +17,17 @@ distance_routes(
 }
 \arguments{
 \item{origin}{A string or vector of strings containing the description of
-the starting point(s). Coordinates in LAT-LONG format (e.g. "50.087,14.421")
-are also a valid input as long as they can be identified by Google Maps.}
+ the starting point(s), such as an address or a place name.
+
+ Coordinates are also a valid input, as latitude and longitude in decimal
+ degrees separated by a comma, e.g. "50.087,14.421" (spaces around the comma
+ are fine). Note that the comma is required: unlike \code{gmapsdistance()},
+ coordinates separated by a space only, such as "50.087 14.421", are not
+ recognized and Google rejects the request with an error.}
 
 \item{destination}{A string or vector of strings containing the description
- of the end point(s). Should be the same format as the variable "origin".
+ of the end point(s). Should be the same format as the variable "origin",
+ including the comma between latitude and longitude of coordinates.
 
  Origins and destinations are paired, so the two vectors must be of the
  same length; a difference in lengths is an error.}

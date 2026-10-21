@@ -233,3 +233,22 @@ test_that("departure and arrival times work", {
   expect_gte(rush_hour$duration_traffic, night$duration_traffic)
 
 })
+
+test_that("walking from Marathon to Athens works", {
+  skip_on_cran() # because API key...
+
+  # the vignette example, with coordinates comma separated
+  marathon <- distance_routes(
+    origin = "38.1621328,24.0029257",
+    destination = "37.9908372,23.7383394",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "WALK"
+  )
+
+  expect_equal(marathon$status, "OK")
+
+  # a marathon is 42.195 km, the shortest walk is a bit less
+  expect_gt(marathon$distance_value, 35000)
+  expect_lt(marathon$distance_value, 45000)
+
+})
