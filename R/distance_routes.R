@@ -263,13 +263,17 @@ distance_routes <- function(origin,
 
     }
 
-    # result for the current pair; missing values (e.g. place not found, no route) become NA
+    # Google omits zero values from its response (e.g. from a place to itself), so a
+    # missing value of a found route is zero; of a route not found it is NA
+    missing_value <- if (status == "OK") 0 else NA
+
+    # result for the current pair; missing texts (e.g. place not found, no route) become NA
     results[[i]] <- list(
       status = status,
       distance_text = (\(x) if (is.null(x)) NA else x)(element$localizedValues$distance$text),
-      distance_value = (\(x) if (is.null(x)) NA else x)(element$distanceMeters),
+      distance_value = (\(x) as.numeric(if (is.null(x)) missing_value else x))(element$distanceMeters),
       duration_text = (\(x) if (is.null(x)) NA else x)(element$localizedValues$duration$text),
-      duration_value = (\(x) if (is.null(x)) NA else as.numeric(sub("s$", "", x)))(element$duration)
+      duration_value = (\(x) if (is.null(x)) as.numeric(missing_value) else as.numeric(sub("s$", "", x)))(element$duration)
     )
 
   } # / end for cycle
