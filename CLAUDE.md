@@ -24,7 +24,8 @@ Every API call costs money, so avoid running the full suite in loops.
 - `R/distance_routes.R` - `distance_routes()`, newer pairwise function (origin[i] to
   destination[i], one request per pair) on the **Routes API** (`computeRouteMatrix`, JSON POST with `X-Goog-Api-Key` / `X-Goog-FieldMask`
   headers) via `httr::POST` + `jsonlite`. It maps Routes results back to the legacy
-  `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses.
+  `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses. `avoid` becomes `routeModifiers` on each
+  origin (the matrix method rejects them at top level; it does not support `avoidTunnels`).
   **Pairwise only, by design:** matrix output, `shape` and `combinations = "all"` are not
   planned for `distance_routes()` - don't add them or list them as gaps. Those stay with
   `gmapsdistance()`.

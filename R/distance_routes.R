@@ -42,6 +42,16 @@
 #' @param key Google Maps API key. Defaults to the key set by
 #'  \code{set.api.key("THISISMYKEY")}.
 #'
+#' @param avoid A string or vector of strings with route features to avoid,
+#'  applied to all pairs. Any of "tolls", "highways" and "ferries" (for mode
+#'  "DRIVE", "TWO_WHEELER" or "TRUCK") or "indoor" (for mode "WALK"); they
+#'  correspond to the \code{avoidTolls}, \code{avoidHighways},
+#'  \code{avoidFerries} and \code{avoidIndoor} route modifiers of the Routes API.
+#'  Default is \code{NULL}, i.e. nothing is avoided.
+#'
+#'  Avoiding is a preference, not a guarantee: Google avoids the features where
+#'  reasonable, so a route may still include them.
+#'
 #' @return A list with 5 named elements, each a vector with one value per
 #'  origin / destination pair, or \code{NA} if the API could not be reached:
 #' \itemize{
@@ -58,7 +68,7 @@
 #'  }
 #'
 #' @seealso \code{\link{gmapsdistance}} for all combinations of origins and
-#'  destinations, departure and arrival times, traffic models and route restrictions.
+#'  destinations, departure and arrival times and traffic models.
 #'
 #' @examples
 #' \dontshow{set.api.key(Sys.getenv("GOOGLE_API_KEY"))}
@@ -71,6 +81,11 @@
 #' # driving distances for two pairs: London to Paris and Prague to Vienna
 #' distance_routes(origin = c("London, UK", "Prague, CZ"),
 #'                 destination = c("Paris, FR", "Vienna, AT"))
+#'
+#' # driving distance from Washington DC to NYC, avoiding toll roads
+#' distance_routes(origin = "Washington DC",
+#'                 destination = "New York City NY",
+#'                 avoid = "tolls")
 #' }
 #'
 #' @export
@@ -82,7 +97,8 @@
 distance_routes <- function(origin,
                             destination,
                             mode = "DRIVE",
-                            key = get.api.key()
+                            key = get.api.key(),
+                            avoid = NULL
                             ) {
 
   # input validation - length
@@ -126,6 +142,32 @@ distance_routes <- function(origin,
 
   }
 
+  # input validation - route features to avoid, named as Routes API route modifiers
+  avoid <- unique(avoid)
+  avoid_modifiers <- c(tolls = "avoidTolls", highways = "avoidHighways",
+                       ferries = "avoidFerries", indoor = "avoidIndoor")
+
+  if (!all(avoid %in% names(avoid_modifiers))) {
+
+    stop("Avoid parameters not recognized. Avoid should be one of ",
+         "'tolls', 'highways', 'ferries', 'indoor'")
+
+  }
+
+  if (any(avoid %in% c("tolls", "highways", "ferries")) &&
+        !mode %in% c("DRIVE", "TWO_WHEELER", "TRUCK")) {
+
+    stop("Avoiding 'tolls', 'highways' and 'ferries' is defined only for ",
+         "mode = 'DRIVE', 'TWO_WHEELER' or 'TRUCK'.")
+
+  }
+
+  if ("indoor" %in% avoid && mode != "WALK") {
+
+    stop("Avoiding 'indoor' is defined only for mode = 'WALK'.")
+
+  }
+
   # Routes API does not geocode "lat,long" strings; coordinates go as latLng instead
   waypoints <- lapply(c(origin, destination), \(x) {
     coords <- regmatches(x, regexec("^\\s*(-?[0-9.]+)\\s*,\\s*(-?[0-9.]+)\\s*$", x))[[1]]
@@ -139,6 +181,17 @@ distance_routes <- function(origin,
 
   n <- length(origin)
   results <- vector("list", n)
+
+  # features to avoid travel as route modifiers of each origin
+  if (length(avoid) > 0) {
+
+    route_modifiers <- as.list(rep(TRUE, length(avoid)))
+    names(route_modifiers) <- unname(avoid_modifiers[avoid])
+
+    waypoints[seq_len(n)] <- lapply(waypoints[seq_len(n)],
+                                    \(x) c(x, list(routeModifiers = route_modifiers)))
+
+  }
 
   # one call per pair - a single matrix call would be billed for all n x n elements
   for (i in seq_len(n)) {

@@ -4,7 +4,13 @@
 \alias{distance_routes}
 \title{Compute Pairwise Distances with Google Maps}
 \usage{
-distance_routes(origin, destination, mode = "DRIVE", key = get.api.key())
+distance_routes(
+  origin,
+  destination,
+  mode = "DRIVE",
+  key = get.api.key(),
+  avoid = NULL
+)
 }
 \arguments{
 \item{origin}{A string or vector of strings containing the description of
@@ -31,6 +37,16 @@ are also a valid input as long as they can be identified by Google Maps.}
 
 \item{key}{Google Maps API key. Defaults to the key set by
 \code{set.api.key("THISISMYKEY")}.}
+
+\item{avoid}{A string or vector of strings with route features to avoid,
+ applied to all pairs. Any of "tolls", "highways" and "ferries" (for mode
+ "DRIVE", "TWO_WHEELER" or "TRUCK") or "indoor" (for mode "WALK"); they
+ correspond to the \code{avoidTolls}, \code{avoidHighways},
+ \code{avoidFerries} and \code{avoidIndoor} route modifiers of the Routes API.
+ Default is \code{NULL}, i.e. nothing is avoided.
+
+ Avoiding is a preference, not a guarantee: Google avoids the features where
+ reasonable, so a route may still include them.}
 }
 \value{
 A list with 5 named elements, each a vector with one value per
@@ -78,10 +94,15 @@ distance_routes(origin = "King's Cross St. Pancras, London, UK",
 # driving distances for two pairs: London to Paris and Prague to Vienna
 distance_routes(origin = c("London, UK", "Prague, CZ"),
                 destination = c("Paris, FR", "Vienna, AT"))
+
+# driving distance from Washington DC to NYC, avoiding toll roads
+distance_routes(origin = "Washington DC",
+                destination = "New York City NY",
+                avoid = "tolls")
 }
 
 }
 \seealso{
 \code{\link{gmapsdistance}} for all combinations of origins and
- destinations, departure and arrival times, traffic models and route restrictions.
+ destinations, departure and arrival times and traffic models.
 }

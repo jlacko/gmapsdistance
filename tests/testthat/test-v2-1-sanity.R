@@ -86,3 +86,46 @@ test_that("pairwise distances work", {
   expect_true(is.na(pairs$distance_value[3]))
 
 })
+
+test_that("avoid works", {
+  skip_on_cran() # because API key...
+
+  plain <- distance_routes(
+    origin = "Washington DC",
+    destination = "New York City NY",
+    key = Sys.getenv("GOOGLE_API_KEY")
+  )
+
+  # avoid tolls = big impact
+  tolls <- distance_routes(
+    origin = "Washington DC",
+    destination = "New York City NY",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    avoid = "tolls"
+  )
+
+  # multiple features to avoid
+  several <- distance_routes(
+    origin = "Washington DC",
+    destination = "New York City NY",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    avoid = c("tolls", "ferries")
+  )
+
+  # indoor navigation - walking only
+  indoor <- distance_routes(
+    origin = "King's Cross St. Pancras, London, UK",
+    destination = "Victoria, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "WALK",
+    avoid = "indoor"
+  )
+
+  expect_equal(tolls$status, "OK")
+  expect_equal(several$status, "OK")
+  expect_equal(indoor$status, "OK")
+
+  # no tolls = longer time...
+  expect_gt(tolls$duration_value, plain$duration_value)
+
+})

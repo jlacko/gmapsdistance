@@ -50,6 +50,44 @@ test_that("invalid input is rejected before calling the API", {
     "use mode = 'WALK' instead"
   )
 
+  # unknown feature to avoid
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    avoid = "tunnels",
+                    key = "irrelevant"),
+    "Avoid parameters not recognized"
+  )
+
+  # road features to avoid while walking
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    mode = "WALK",
+                    avoid = "tolls",
+                    key = "irrelevant"),
+    "defined only for mode = 'DRIVE', 'TWO_WHEELER' or 'TRUCK'"
+  )
+
+  # indoor navigation to avoid while driving
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    avoid = "indoor",
+                    key = "irrelevant"),
+    "defined only for mode = 'WALK'"
+  )
+
+  # indoor navigation to avoid on public transport
+  expect_error(
+    distance_routes(origin = "Prague",
+                    destination = "Vienna",
+                    mode = "TRANSIT",
+                    avoid = "indoor",
+                    key = "irrelevant"),
+    "defined only for mode = 'WALK'"
+  )
+
 })
 
 test_that("place not found is reported, not silently dropped", {
