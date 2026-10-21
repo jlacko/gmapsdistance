@@ -21,8 +21,8 @@ Every API call costs money, so avoid running the full suite in loops.
   builds the request URL by hand, calls the **XML** endpoint via `RCurl::getURL`, parses with
   `XML`, loops over every origin/destination pair (one request each) and returns a list of
   `Distance`, `Time`, `Status` (scalars, wide matrices or long data frames).
-- `R/distance_single.R` - `distance_single()`, newer single-pair function on the **Routes
-  API** (`computeRouteMatrix`, JSON POST with `X-Goog-Api-Key` / `X-Goog-FieldMask`
+- `R/distance_routes.R` - `distance_routes()`, newer pairwise function (origin[i] to
+  destination[i], one request per pair) on the **Routes API** (`computeRouteMatrix`, JSON POST with `X-Goog-Api-Key` / `X-Goog-FieldMask`
   headers) via `httr::POST` + `jsonlite`. It maps Routes results back to the legacy
   `OK` / `NOT_FOUND` / `ZERO_RESULTS` statuses. This is the direction of the `JSON-dev` branch:
   the intent is to eventually move `gmapsdistance()` onto the same httr/jsonlite approach
@@ -51,7 +51,7 @@ Every API call costs money, so avoid running the full suite in loops.
 ## Tests
 
 - testthat 3rd edition; `tests/testthat/test-v1-N-*.R` test `gmapsdistance()`,
-  `tests/testthat/test-v2-N-*.R` test `distance_single()`.
+  `tests/testthat/test-v2-N-*.R` test `distance_routes()`.
 - Anything touching the API starts with `skip_on_cran()`; pure input-validation tests
   should not hit the API and need no skip.
 - Prefer `expect_error(..., "pattern")` with the expected message over bare `expect_error()`.
