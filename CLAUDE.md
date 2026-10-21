@@ -50,7 +50,8 @@ Every API call costs money, so avoid running the full suite in loops.
 
 ## Tests
 
-- `tests/testthat/test-N-*.R`, testthat 3rd edition.
+- testthat 3rd edition; `tests/testthat/test-v1-N-*.R` test `gmapsdistance()`,
+  `tests/testthat/test-v2-N-*.R` test `distance_single()`.
 - Anything touching the API starts with `skip_on_cran()`; pure input-validation tests
   should not hit the API and need no skip.
 - Prefer `expect_error(..., "pattern")` with the expected message over bare `expect_error()`.

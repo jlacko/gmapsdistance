@@ -29,12 +29,21 @@ test_that("modes work", {
       mode = "BICYCLE"
     )
 
+  truck <- distance_single(
+    origin = "King's Cross St. Pancras, London, UK",
+    destination = "Victoria, London, UK",
+    key = Sys.getenv("GOOGLE_API_KEY"),
+    mode = "TRUCK"
+  )
+
+
 
   # http status - all modes should return a value
   expect_equal(driving$status, "OK")
   expect_equal(walking$status, "OK")
   expect_equal(transit$status, "OK")
   expect_equal(bicycling$status, "OK")
+  expect_equal(truck$status, "OK")
 
   # sanity check
   expect_gt(walking$duration_value, driving$duration_value) # walking is slower than driving ...
@@ -49,12 +58,6 @@ test_that("regional modes work", {
   skip_on_cran() # because API key...
 
   # trucks are routed in London ...
-  truck <- distance_single(
-      origin = "King's Cross St. Pancras, London, UK",
-      destination = "Victoria, London, UK",
-      key = Sys.getenv("GOOGLE_API_KEY"),
-      mode = "TRUCK"
-    )
 
   # ... motorbikes in Jakarta (not in London though)
   two_wheeler <- distance_single(
@@ -64,7 +67,7 @@ test_that("regional modes work", {
       mode = "TWO_WHEELER"
     )
 
-  expect_equal(truck$status, "OK")
+
   expect_equal(two_wheeler$status, "OK")
 
 })
