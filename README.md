@@ -100,7 +100,7 @@ We like to keep track of the projects where gmapsdistance has been used. This wi
 
 1. Proximity to pediatric cardiac specialty care for adolescents with congenital heart defects. [Link to article](https://doi.org/10.1002/bdr2.1129). 
 
-2. Measuring Accessibility to Rail Transit Stations in Scarborough: Subway vs. LRT. [Link to article](https://www.torontomu.ca/content/dam/tedrogersschool/documents/Measuring%20accessibility%20to%20rail%20transit%20stations%20in%20Scarborough-final.pdf)
+2. Measuring Accessibility to Rail Transit Stations in Scarborough: Subway vs. LRT. [Link to article](https://web.archive.org/web/20241014200053/https://www.torontomu.ca/content/dam/tedrogersschool/documents/Measuring%20accessibility%20to%20rail%20transit%20stations%20in%20Scarborough-final.pdf)
 
 3. Social Data Science Course. University of Copenhagen. Department of Economics. [Link](https://sebastianbarfort.github.io/sds_summer/slides/gathering.pdf)
 
@@ -110,7 +110,7 @@ We like to keep track of the projects where gmapsdistance has been used. This wi
 
 6. Identifying Partnership Opportunities at Air Force Installations: A Geographic Information Systems Approach [Link](https://scholar.afit.edu/etd/810/) 
 
-7. DataWookie. Review of gmapsdistance. [Link](https://datawookie.dev/blog/2017/08/route-asymmetry-in-google-maps/)
+7. DataWookie. Review of gmapsdistance. [Link](https://datawookie.dev/blog/2017-08-23-map-route-direction-asymmetry/)
 
 8. The Role of Telehealth in Promoting Equitable Abortion Access in the United States: Spatial Analysis [Link to article](https://doi.org/10.2196/45671)
 
