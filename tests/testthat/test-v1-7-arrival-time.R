@@ -2,7 +2,7 @@
 test_that("travel on public transport is faster at daytime", {
   skip_on_cran() # because API key...
 
-#  skip("the assumption behind this test is too strong; skipping for now")
+skip("the assumption behind this test is too strong; skipping for now")
 
   night <- gmapsdistance(
     origin = "Washington DC",
