@@ -42,7 +42,7 @@ results
 ```
 
 ## Walking distance between GPS coordinates
-In this example we will compute the driving distance between the Greek cities of
+In this example we will compute the walking distance between the Greek cities of
 Marathon and Athens. We show that the function is able to handle LAT-LONG coordinates.
 
 ``` {r marathon}
@@ -61,7 +61,7 @@ results = gmapsdistance(origin = c("Washington DC", "New York NY",
                                         "Chicago IL", "Philadelphia PA"),
                         mode = "bicycling",
                         # departure time as seconds from Unix Epoch (1970-01-01)
-                        departure = 1740000000)
+                        departure = 1795040400)
 results
 # Equivalently
 results = gmapsdistance(origin = c("Washington DC", "New York NY",
@@ -69,7 +69,7 @@ results = gmapsdistance(origin = c("Washington DC", "New York NY",
                         destination = c("Los Angeles CA", "Austin TX",
                                         "Chicago IL", "Philadelphia PA"),
                         mode = "bicycling",
-                        dep_date = "2025-02-19",
+                        dep_date = "2026-11-18",
                         dep_time = "22:20:00")
 results
 ```
@@ -146,7 +146,7 @@ APIkey <- Sys.getenv("GOOGLE_API_KEY") # your actual API key would go here...
 results = gmapsdistance(origin = c("Washington DC", "New York NY"),
                         destination = c("Los Angeles CA", "Austin TX"),
                         mode = "driving",
-                        dep_date = "2023-11-14",
+                        dep_date = "2026-11-14",
                         dep_time = "23:13:20",
                         traffic_model = "pessimistic",
                         shape = "long",
@@ -170,5 +170,64 @@ It is perfectly possible to use names in non-ASCII characters; care must be howe
 results = gmapsdistance(origin = "вулиця Хрещатик, Київ",
                         destination = "Майдан Незалежності, Київ",
                         mode = "walking")
+results
+```
+
+## Using Routes API
+
+The original `gmapsdistance()` function uses [Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview), which has transitioned to Legacy status and since October 2026 can no longer be used for new projects.
+
+As a consequence a new implementation was introduced that maps to the new [Routes API](https://developers.google.com/maps/documentation/routes) platform, which is the new best practice. It is done in a separate function `distance_routes()`, so that the existing `gmapsdistance()` implementation can be kept in place for backward compatibility. `gmapsdistance()` may be deprecated in a future version of the package.
+
+The new implementation follows existing conventions as closely as practical, with some differences - namely the travel modes follow new naming conventions (all UPPERCASE) and the output is now a data frame with one row per origin-destination pair.
+
+``` {r plain-vanilla-v2}
+results <- distance_routes(origin = "Washington DC",
+                           destination = "New York City NY")
+results
+```
+The new function supports only pairwise combinations of origins and destinations, and unlike the original one does not provide option of a matrix output or all combinations.
+
+``` {r combinations-v2}
+or <- c("Washington DC", "New York NY", "Seattle WA", "Miami FL")
+des <- c("Los Angeles CA", "Austin TX", "Chicago IL", "Philadelphia PA")
+
+results <- distance_routes(origin = or,
+                           destination = des,
+                           mode = "BICYCLE")
+results
+```
+Most of the arguments have stayed the same, with some differences. Notably the departure (and arrival) date and time has been changed to a single `POSIXct` argument (defaulting to current computer's timezone, possibly giving unintended results).
+
+The output reports two travel times: `duration_base` is the time without considering traffic, and `duration_traffic` the time in traffic. The two are the same unless traffic is considered - that is when a `traffic_model` is given, or a departure time for a trip by road (modes `DRIVE`, `TWO_WHEELER` and `TRUCK`).
+
+``` {r optional-params-v2}
+APIkey <- Sys.getenv("GOOGLE_API_KEY") # your actual API key would go here...
+
+# pairwise: Washington DC -> Los Angeles CA, New York NY -> Austin TX
+# Time and distance using a 'pessimistic' traffic model.
+results <- distance_routes(origin = c("Washington DC", "New York NY"),
+                           destination = c("Los Angeles CA", "Austin TX"),
+                           mode = "DRIVE",
+                           departure = as.POSIXct("2026-11-14 23:13:20", tz = "America/New_York"),
+                           traffic_model = "PESSIMISTIC",
+                           key=APIkey)
+results
+
+# Time and distance avoiding 'tolls'.
+results <- distance_routes(origin = c("Washington DC", "New York NY"),
+                           destination = c("Los Angeles CA", "Austin TX"),
+                           mode = "DRIVE",
+                           avoid = "tolls",
+                           key=APIkey)
+results
+```
+
+Additionally the origin and destination specifications using coordinates require a comma between latitude and longitude, unlike the space accepted by `gmapsdistance()`.
+
+``` {r marathon-v2}
+results <- distance_routes(origin = "38.1621328,24.0029257",
+                           destination = "37.9908372,23.7383394",
+                           mode = "WALK")
 results
 ```

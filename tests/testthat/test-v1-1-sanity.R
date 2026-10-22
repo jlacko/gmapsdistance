@@ -31,7 +31,7 @@ test_that("modes work", {
 
   nonsense <- gmapsdistance(
     origin = "King's Cross St. Pancras, London, UK",
-    destination = "0,0",
+    destination = "Honolulu, HI", # not "0,0" - Google rejects Null Island outright
     key = Sys.getenv("GOOGLE_API_KEY"),
     mode = "driving"
   )
@@ -42,7 +42,7 @@ test_that("modes work", {
   expect_equal(transit$Status, "OK")
   expect_equal(bicycling$Status, "OK")
 
-  # there is no route known from London to the Null Island
+  # there is no driving route from London to Hawaii
   expect_equal(nonsense$Status, "ROUTE_NOT_FOUND")
 
   # sanity check
